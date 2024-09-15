@@ -5,17 +5,12 @@ import os
 app = Flask(__name__)
 app.secret_key = 'supersecretkey'
 
-# Temporary storage for the converted text and the audio file path
-converted_text = None
-audio_file = None
-
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('index.html', audio_file=None)
 
 @app.route('/convert', methods=['POST'])
 def convert_text_to_speech():
-    global converted_text, audio_file
     text = request.form.get('text')
     
     if text:
@@ -25,23 +20,23 @@ def convert_text_to_speech():
             if not os.path.exists(static_folder):
                 os.makedirs(static_folder)
 
-            converted_text = text
             tts = gTTS(text=text, lang='en', slow=False)
-            audio_file = os.path.join(static_folder, "speech.mp3")
-            tts.save(audio_file)
+            audio_file = os.path.join('static', 'speech.mp3')  # Save relative path for front-end
+            tts.save(os.path.join(app.root_path, audio_file))
             flash("Conversion successful! You can now download the audio.")
+            return render_template('index.html', audio_file=audio_file)
         except Exception as e:
             flash(f"Error during conversion: {str(e)}")
+            return render_template('index.html', audio_file=None)
     else:
         flash("Error: No text provided")
-
-    return redirect(url_for('index'))
+        return render_template('index.html', audio_file=None)
 
 @app.route('/download')
 def download_audio():
-    global audio_file
-    if audio_file:
-        return redirect(f'/static/speech.mp3')
+    audio_file = os.path.join('static', 'speech.mp3')
+    if os.path.exists(audio_file):
+        return redirect(f'/{audio_file}')
     else:
         flash("No audio file to download!")
         return redirect(url_for('index'))
