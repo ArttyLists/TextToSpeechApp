@@ -7,10 +7,32 @@
 </head>
 <body>
     <h1>Text to Speech Converter</h1>
+    
+    <!-- Flash messages for conversion success/failure -->
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul>
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+
+    <!-- Form to input text -->
     <form action="/convert" method="POST">
         <textarea name="text" rows="10" cols="50" placeholder="Enter text here..."></textarea>
         <br>
         <input type="submit" value="Convert to Speech">
     </form>
+
+    <!-- Show the download button only after conversion -->
+    {% if audio_file %}
+    <br>
+    <form action="/download" method="GET">
+        <button type="submit">Download MP3</button>
+    </form>
+    {% endif %}
+    
 </body>
 </html>
