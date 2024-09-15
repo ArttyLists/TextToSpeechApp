@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, send_file
 from gtts import gTTS
 import os
 
@@ -34,14 +34,12 @@ def convert_text_to_speech():
 
 @app.route('/download')
 def download_audio():
-    audio_file = os.path.join('static', 'speech.mp3')
-    if os.path.exists(audio_file):
-        return redirect(f'/{audio_file}')
+    audio_file_path = os.path.join(app.root_path, 'static', 'speech.mp3')
+    if os.path.exists(audio_file_path):
+        return send_file(audio_file_path, as_attachment=True)  # Send as a downloadable file
     else:
         flash("No audio file to download!")
         return redirect(url_for('index'))
 
 if __name__ == '__main__':
-    # Check if running in production environment
     app.run(host='0.0.0.0', port=os.getenv('PORT', 5000), debug=os.getenv('FLASK_DEBUG', False))
-
