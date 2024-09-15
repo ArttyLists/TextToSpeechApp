@@ -20,9 +20,14 @@ def convert_text_to_speech():
     
     if text:
         try:
+            # Ensure 'static' directory exists
+            static_folder = os.path.join(app.root_path, 'static')
+            if not os.path.exists(static_folder):
+                os.makedirs(static_folder)
+
             converted_text = text
             tts = gTTS(text=text, lang='en', slow=False)
-            audio_file = "static/speech.mp3"
+            audio_file = os.path.join(static_folder, "speech.mp3")
             tts.save(audio_file)
             flash("Conversion successful! You can now download the audio.")
         except Exception as e:
@@ -36,7 +41,7 @@ def convert_text_to_speech():
 def download_audio():
     global audio_file
     if audio_file:
-        return redirect(f'/{audio_file}')
+        return redirect(f'/static/speech.mp3')
     else:
         flash("No audio file to download!")
         return redirect(url_for('index'))
