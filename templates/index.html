@@ -4,35 +4,82 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Text to Speech App</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRZ2la3f5K3pDI5I5kIcKp0Kq2Pp7r/CVf+bW7X8e" crossorigin="anonymous">
+    
+    <!-- Custom CSS -->
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Arial', sans-serif;
+            padding-top: 50px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #343a40;
+            margin-bottom: 30px;
+        }
+        textarea {
+            resize: none;
+        }
+        .btn-custom {
+            background-color: #007bff;
+            color: white;
+        }
+        .btn-custom:hover {
+            background-color: #0056b3;
+        }
+        .messages {
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
 <body>
-    <h1>Text to Speech Converter</h1>
-    
-    <!-- Flash messages for conversion success/failure -->
-    {% with messages = get_flashed_messages() %}
-        {% if messages %}
-            <ul>
-            {% for message in messages %}
-                <li>{{ message }}</li>
-            {% endfor %}
-            </ul>
-        {% endif %}
-    {% endwith %}
 
-    <!-- Form to input text -->
-    <form action="/convert" method="POST">
-        <textarea name="text" rows="10" cols="50" placeholder="Enter text here..."></textarea>
+    <div class="container">
+        <h1>Text to Speech Converter</h1>
+
+        <!-- Flash messages for conversion success/failure -->
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="alert alert-info messages">
+                    <ul>
+                    {% for message in messages %}
+                        <li>{{ message }}</li>
+                    {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <!-- Form to input text -->
+        <form action="/convert" method="POST">
+            <div class="mb-3">
+                <textarea class="form-control" name="text" rows="5" placeholder="Enter text here..."></textarea>
+            </div>
+            <button type="submit" class="btn btn-custom w-100">Convert to Speech</button>
+        </form>
+
+        <!-- Show the download button only after conversion -->
+        {% if audio_file %}
         <br>
-        <input type="submit" value="Convert to Speech">
-    </form>
+        <form action="/download" method="GET">
+            <button type="submit" class="btn btn-success w-100 mt-3">Download MP3</button>
+        </form>
+        {% endif %}
+    </div>
 
-    <!-- Show the download button only after conversion -->
-    {% if audio_file %}
-    <br>
-    <form action="/download" method="GET">
-        <button type="submit">Download MP3</button>
-    </form>
-    {% endif %}
-    
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AOS7fQQ5Rt0FSrDsVc4NV7gktsNOcwS3LA+z8b94qPEbCk+vSTPVR06v3HbO" crossorigin="anonymous"></script>
+
 </body>
 </html>
