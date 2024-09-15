@@ -19,4 +19,5 @@ def convert_text_to_speech():
     return "Error: No text provided"
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=os.getenv('PORT', 5000))
+
